@@ -5,7 +5,7 @@
 ## Install
 
 ```
-$ npm install --save npm-packer
+$ npm install -g npm-packer
 ```
 
 ## Usage
