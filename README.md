@@ -1,6 +1,6 @@
 # ![npm-packer](http://imgh.us/npm-packer_1.svg)
 
-> Produces zero-dependencies node module
+> Produces zero-dependencies node modules
 
 ## Installation
 
