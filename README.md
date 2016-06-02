@@ -1,4 +1,4 @@
-# ![npm-packer](http://imgh.us/npm-packer.svg)
+# ![npm-packer](http://imgh.us/npm-packer_1.svg)
 
 > Produces zero-dependencies node module
 
