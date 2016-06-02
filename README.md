@@ -2,7 +2,7 @@
 
 > Produces zero-dependencies node module
 
-## Install
+## Installation
 
 ```
 $ npm install -g npm-packer
@@ -10,16 +10,16 @@ $ npm install -g npm-packer
 
 ## Usage
 
-```js
+```
 npm-packer <source> <target>
 ```
 
 - `<source>` can be either existing directory or npm package prefixed with `npm:`
-- `<target>` must be non-existing directory 
+- `<target>` must be non-existing directory
 
 ```
 npm-packer . dist
-npm-packer npm:jquery 
+npm-packer npm:jquery
 ```
 
 ## How it works?
