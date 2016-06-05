@@ -69,6 +69,9 @@
     "esnext": true,
     "rules": {
       "babel/object-curly-spacing": 0
-    }
+    },
+    "ignore": [
+      "lib/**/*.js"
+    ]
   }
 }

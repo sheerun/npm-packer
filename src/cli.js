@@ -233,6 +233,12 @@ async function main() {
       delete json.optionalDependencies
     }
 
+    if (!json.keywords) {
+      json.keywords = []
+    }
+
+    json.keywords.push('npm-packer')
+
     await fs.writeJson(path.resolve(target, 'package.json'), json)
   })
 }
