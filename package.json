@@ -16,7 +16,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "ava",
-    "lint": "xo --fix",
+    "lint": "xo",
     "build": "rimraf lib && babel src --out-dir lib --loose"
   },
   "files": [
@@ -62,5 +62,13 @@
     "plugins": [
       "transform-runtime"
     ]
+  },
+  "xo": {
+    "space": true,
+    "semicolon": false,
+    "esnext": true,
+    "rules": {
+      "babel/object-curly-spacing": 0
+    }
   }
 }

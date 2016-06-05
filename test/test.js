@@ -1,6 +1,3 @@
-import test from 'ava';
-import fn from './';
+import test from 'ava'
 
-test('title', t => {
-	t.is(fn('unicorns'), 'unicorns & rainbows');
-});
+test.todo('write tests')
