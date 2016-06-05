@@ -178,7 +178,7 @@ async function main() {
         filename: file,
         comments: false,
         plugins: [
-          [path.join(__dirname, '..', 'node_modules', 'babel-plugin-module-alias'), mappings]
+          [require.resolve('babel-plugin-module-alias'), mappings]
         ]
       })
 
