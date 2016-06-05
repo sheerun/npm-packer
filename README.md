@@ -19,7 +19,7 @@ npm-packer <source> <target>
 
 ```
 npm-packer . dist
-npm-packer npm:jquery
+npm-packer npm:jquery jquery-packed
 ```
 
 ## How it works?
