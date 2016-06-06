@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @flow
 
 const fetch = require('fetch-file')
 const babel = require('babel-core')
@@ -89,6 +90,9 @@ async function tryExec(command, options) {
     }
 
     terminate(message)
+
+    // To make flow happy
+    return { stdout: '', stderr: '' }
   }
 }
 
@@ -155,7 +159,7 @@ async function main() {
     })
   }
 
-  const json = require(path.join(target, 'package.json'))
+  const json = JSON.parse(fs.readFileSync(path.join(target, 'package.json')))
 
   await step('Transforming js files with babel...', async () => {
     const mappings = []
