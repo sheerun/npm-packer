@@ -152,7 +152,7 @@ async function main() {
     await step('Copying package source...', async () => {
       const dir = `${tmpDir}/package`
       const { stdout } = await tryExec('npm pack', { cwd: src })
-      const pkgPath = path.join(process.cwd(), stdout.trim())
+      const pkgPath = path.resolve(source, stdout.trim())
       await targz().extract(pkgPath, tmpDir)
       await fs.removeAsync(pkgPath)
       await fs.moveAsync(dir, target)
@@ -204,11 +204,11 @@ async function main() {
         files.push(path.join(target, json.bin))
       }
     } else if (typeof json.bin === 'object') {
-      json.bin.forEach(key => {
+      for (const key in json.bin) {
         if (files.indexOf(path.join(target, json.bin[key])) === -1) {
           files.push(path.join(target, json.bin[key]))
         }
-      })
+      }
     }
 
     for (const file of files) {
