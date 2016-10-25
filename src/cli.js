@@ -13,6 +13,7 @@ const path = require('path')
 const targz = require('tar.gz')
 const find = pify(require('enfsfind').find)
 const babylon = require('babylon')
+const semver = require('semver')
 
 Spinner.setDefaultSpinnerString(19)
 Spinner.setDefaultSpinnerDelay(100)
@@ -20,7 +21,7 @@ Spinner.setDefaultSpinnerDelay(100)
 const cli = meow([
   'Specifically it:',
   '  1. Runs "npm pack" on <source> module and copies result to <target>',
-  '  2. Performs "npm install --production --no-optional" on <target>',
+  '  2. Performs "npm install --production" on <target>',
   '  3. Copies installed modules to "<target>/vendor/node_modules"',
   '  4. Rewrites all require(...) calls',
   '  5. Removes "dependencies" from package.json',
@@ -29,6 +30,9 @@ const cli = meow([
   '',
   'Usage',
   '  $ bundle-package <source> <target>',
+  '',
+  'Options',
+  '  --yarn  Use yarn instead of npm',
   '',
   'Examples',
   '  $ npm-packer . dist',
@@ -109,17 +113,29 @@ async function main() {
   }
 
   await step('Running checks...', async () => {
-    const { stdout } = await exec('npm version --json')
+    if (cli.flags.yarn) {
+      try {
+        const { stdout } = await exec('yarn --version')
 
-    const npmVersion = JSON.parse(stdout).npm.split('.')
-    const npmMajor = parseInt(npmVersion[0], 10)
+        if (!semver.valid(stdout.replace(/^\s+|\s+$/g, ''))) {
+          throw new Error('yarn not installed')
+        }
+      } catch (err) {
+        terminate(['Please install yarn globally first'])
+      }
+    } else {
+      const { stdout } = await exec('npm version --json')
 
-    if (npmMajor < 3) {
-      terminate([
-        'You need to use at least npm 3.',
-        'Previous versions produce too long paths that Windows cannot handle.',
-        'Please upgrade it: npm install -g npm'
-      ])
+      const npmVersion = JSON.parse(stdout).npm.split('.')
+      const npmMajor = parseInt(npmVersion[0], 10)
+
+      if (npmMajor < 3) {
+        terminate([
+          'You need to use at least npm 3.',
+          'Previous versions produce too long paths that Windows cannot handle.',
+          'Please upgrade it: npm install -g npm'
+        ])
+      }
     }
   })
 
@@ -149,9 +165,18 @@ async function main() {
       terminate('[source] needs to be a directory')
     }
 
+    async function pack() {
+      if (cli.flags.yarn) {
+        // yarn pack is broken now... it packages all files
+        return await tryExec('npm pack', { cwd: src })
+      } else {
+        return await tryExec('npm pack', { cwd: src })
+      }
+    }
+
     await step('Copying package source...', async () => {
       const dir = `${tmpDir}/package`
-      const { stdout } = await tryExec('npm pack', { cwd: src })
+      const { stdout } = await pack();
       const pkgPath = path.resolve(source, stdout.trim())
       await targz().extract(pkgPath, tmpDir)
       await fs.removeAsync(pkgPath)
@@ -216,13 +241,19 @@ async function main() {
     }
   })
 
-  await step('Running "npm install --production"...', async () => {
-    await tryExec('npm install --production --ignore-scripts', { cwd: target })
-  })
+  if (cli.flags.yarn) {
+    await step('Running "yarn install --production"...', async () => {
+      await tryExec('yarn install --production --ignore-scripts --pure-lockfile --modules-folder vendor/node_modules --ignore-engines', { cwd: target })
+    })
+  } else {
+    await step('Running "npm install --production"...', async () => {
+      await tryExec('npm install --production --ignore-scripts', { cwd: target })
+    })
 
-  await step('Moving node_modules to vendor directory"...', async () => {
-    await fs.moveAsync(path.join(target, 'node_modules'), path.join(target, 'vendor', 'node_modules'))
-  })
+    await step('Moving node_modules to vendor directory"...', async () => {
+      await fs.moveAsync(path.join(target, 'node_modules'), path.join(target, 'vendor', 'node_modules'))
+    })
+  }
 
   await step('Overwriting package.json...', async () => {
     if (json.files) {
