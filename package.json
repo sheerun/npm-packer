@@ -1,6 +1,6 @@
 {
   "name": "npm-packer",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Produces zero-dependencies node module",
   "license": "MIT",
   "repository": "sheerun/bundle-package",
