@@ -1,6 +1,17 @@
 # ![npm-packer](http://imgh.us/npm-packer_1.svg)
 
-> Produces zero-dependencies node modules
+A tool for producing zero-dependencies node modules.
+
+Features:
+
+
+- [x] Doesn't move around any files. It ensures backward-compatibility of packaged modules
+- [x] Doesn't package optional dependencies, you can use them for native moduels
+- [x] Doesn't package devDependencies
+- [x] Can use Yarn instead of npm for reliable builds
+- [x] Can package dependencies directy from npm
+- [x] Properly handles bin paths
+- [x] Easy to use 🌹
 
 ## Installation
 
